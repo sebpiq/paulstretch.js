@@ -32,9 +32,13 @@ var Track = module.exports = function(audioSource) {
   this.filterNode.frequency.value = this.filterFreq
   this.mixerNode = context.createGain()
 
+  this.audioSource.addEventListener('error', function(err) {
+    self.emit('load:error')
+  })
+
   this.audioSource.addEventListener('canplay', function() {
     var numberOfChannels = 2
-    self.paulstretchWorker = new Worker('/js/paulstretch-worker.js')
+    self.paulstretchWorker = new Worker('./js/paulstretch-worker.js')
     self.paulstretchNode = context.createScriptProcessor(bufferSize, numberOfChannels, numberOfChannels)
 
     self.paulstretchWorker.postMessage({
@@ -88,7 +92,7 @@ var Track = module.exports = function(audioSource) {
     self.filterNode.connect(self.mixerNode)
     self.mixerNode.connect(context.destination)
 
-    self.emit('ready')
+    self.emit('load:ready')
   }, true)
 }
 inherits(Track, EventEmitter)

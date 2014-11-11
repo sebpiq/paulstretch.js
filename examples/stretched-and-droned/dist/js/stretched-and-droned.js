@@ -989,8 +989,8 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require("Wejdw2"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":4,"Wejdw2":3,"inherits":2}],6:[function(require,module,exports){
+}).call(this,require("8+0biL"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":4,"8+0biL":3,"inherits":2}],6:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
   , inherits = require('util').inherits
   , utils = require('./utils')
@@ -1025,9 +1025,13 @@ var Track = module.exports = function(audioSource) {
   this.filterNode.frequency.value = this.filterFreq
   this.mixerNode = context.createGain()
 
+  this.audioSource.addEventListener('error', function(err) {
+    self.emit('load:error')
+  })
+
   this.audioSource.addEventListener('canplay', function() {
     var numberOfChannels = 2
-    self.paulstretchWorker = new Worker('/js/paulstretch-worker.js')
+    self.paulstretchWorker = new Worker('./js/paulstretch-worker.js')
     self.paulstretchNode = context.createScriptProcessor(bufferSize, numberOfChannels, numberOfChannels)
 
     self.paulstretchWorker.postMessage({
@@ -1081,7 +1085,7 @@ var Track = module.exports = function(audioSource) {
     self.filterNode.connect(self.mixerNode)
     self.mixerNode.connect(context.destination)
 
-    self.emit('ready')
+    self.emit('load:ready')
   }, true)
 }
 inherits(Track, EventEmitter)
@@ -1143,10 +1147,20 @@ var EventEmitter = require('events').EventEmitter
 
 var TrackView = module.exports = function(root, display) {
   EventEmitter.apply(this)
+
+  // Setting-up the DOM
   this.root = root
   this.trackContainer = $('<div>', {class: 'track loading'}).appendTo(this.root)
+  
   this.loader = $('<div>', {class: 'loader'}).appendTo(this.trackContainer)
-  $('<div>', {class: 'loaderText'}).html('loading').appendTo(this.loader)
+  $('<div>', {class: 'loaderText'})
+    .html('loading <button class="cancelLoad">X</button>')
+    .appendTo(this.loader)
+
+  this.errorMessage = $('<div>', {class: 'errorMessage'}).appendTo(this.trackContainer)
+  $('<div>', {class: 'errorText'})
+    .html('track couldn\'t load <button class="cancelLoad">X</button>')
+    .appendTo(this.errorMessage)
 
   var self = this
     , stretchModuleContainer = $('<div>', {class: 'module'}).appendTo(this.trackContainer)
@@ -1162,6 +1176,15 @@ var TrackView = module.exports = function(root, display) {
   $('<div>', {class: 'moduleTitle trackInfos'}).html(display.slice(0, 20) + ' ...')
     .appendTo(trackInfosContainer)
 
+  $('<button>', { class: 'deleteTrack' })
+    .appendTo(trackInfosContainer)
+    .html('remove track')
+    .click(this.destroy.bind(this))
+
+  $('button.cancelLoad').click(this.destroy.bind(this))
+
+
+  // Creating controls
   this.stretchDial = this.makeDial(stretchModuleContainer, 'stretch', 'Ratio',
     function(val) { return 1 + utils.mapExp(val, 10) * 999 },
     function(val) { return utils.reverseMapExp((val - 1) / 999, 10) }
@@ -1195,17 +1218,17 @@ var TrackView = module.exports = function(root, display) {
     function(val) { return utils.reverseMapExp((val - 0.0001) / 4, 2) }
   )
 
-  $('<button>', { class: 'deleteTrack' })
-    .appendTo(trackInfosContainer)
-    .html('remove track')
-    .click(function() { self.destroy() })
-
   this.refresh()
 }
 inherits(TrackView, EventEmitter)
 
 TrackView.prototype.setReady = function() {
   this.trackContainer.removeClass('loading')
+}
+
+TrackView.prototype.setError = function() {
+  this.trackContainer.removeClass('loading')
+  this.trackContainer.addClass('errored')
 }
 
 TrackView.prototype.destroy = function() {
@@ -1215,6 +1238,12 @@ TrackView.prototype.destroy = function() {
 
 TrackView.prototype.refresh = function() {
   this.loader.css({
+    width: this.trackContainer.width(),
+    height: this.trackContainer.height(),
+    top: this.trackContainer.offset().top,
+    left: this.trackContainer.offset().left
+  })
+  this.errorMessage.css({
     width: this.trackContainer.width(),
     height: this.trackContainer.height(),
     top: this.trackContainer.offset().top,
@@ -1316,7 +1345,8 @@ $(function() {
 
     track.view.on('change:ampModShape', track.model.setAmpModShape.bind(track.model))
 
-    track.model.on('ready', track.view.setReady.bind(track.view))
+    track.model.on('load:ready', track.view.setReady.bind(track.view))
+    track.model.on('load:error', track.view.setError.bind(track.view))
   }
 
   var hideModal = function() {

@@ -53,7 +53,8 @@ $(function() {
 
     track.view.on('change:ampModShape', track.model.setAmpModShape.bind(track.model))
 
-    track.model.on('ready', track.view.setReady.bind(track.view))
+    track.model.on('load:ready', track.view.setReady.bind(track.view))
+    track.model.on('load:error', track.view.setError.bind(track.view))
   }
 
   var hideModal = function() {

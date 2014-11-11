@@ -9,150 +9,7 @@
   <script src="js/nexusUI.js"></script>
   <script src="js/stretched-and-droned.js"></script>
   <link href='http://fonts.googleapis.com/css?family=Cutive+Mono|Anonymous+Pro|VT323|Share+Tech+Mono' rel='stylesheet' type='text/css'>
-  <style>
-  a, a:visited {
-    color: #009ee0;
-  }
-  body {
-    background-color: #111;
-    font-family: 'Anonymous Pro';
-    color: #666;
-  }
-  h2, h1 {
-    margin: 0;
-    color: #009ee0;
-    text-transform: uppercase;
-  }
-  h1 {
-    margin-bottom: 1em;
-  }
-  input {
-    color: #aaa;
-  }
-  button {
-    cursor: pointer;
-  }
-  button, input {
-    background-color: #333;
-    border: none;
-    padding: 0.4em 1em; 
-  }
-  button, input[type="submit"] {
-    font-family: 'Anonymous Pro';
-    border-radius: 0.4em;
-    color: #00aa00;
-    text-transform: uppercase;
-  }
-  .invisible {
-    visibility: hidden;
-  }
-  .modal {
-    display: none;
-    color: white;
-    position: absolute;
-    top: 25%;
-    left: 25%;
-    width: 50%;
-    height: 50%;
-    background-color: rgba(80, 80, 80, 0.7);
-    padding: 2em;
-  }
-  #soundSourcesModal h2 {
-    display: inline-block;
-  }
-  #maxTracksReachedModal {
-  }
-  .soundSource form {
-    display: inline-block;
-    float: right;
-  }
-  .searchResults {
-    margin-top: 4em;
-  }
-  .searchResult {
-    padding: 0.1em 0.2em;
-    cursor: pointer;
-  }
-  #modalOverlay {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-  #createTrack, #showAbout {
-    font-weight: bold;
-    position: absolute;
-    right: 1em;
-    top: 1em;
-    min-height: 2em;
-    min-width: 10em;
-  }
-  #showAbout {
-    top: 4em;
-  }
-  #createTrack
-  .track.loading .loader {
-    display: block;
-  }
-  .loader {
-    display: none;
-    background-color: rgba(0, 0, 0, 0.65);
-    position: absolute;
-  }
-  .loaderText {
-    width: 100%;
-    text-align: center;
-    position: relative;
-    top: 45%;
-    font-size: 200%;
-    text-transform: uppercase;
-    color: #00aa00;
-  }
-  .module {
-    display: inline-block;
-    padding: 0.8em;
-    margin: 0.35em;
-    background-color: #1c1c1c;
-    border-radius: 1.5em;
-  }
-  .moduleTitle {
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 80%;
-    border-bottom: 1px solid #666;
-  }
-  .control {
-    display: inline-block;
-    text-align: center;
-    min-width: 5em;
-    padding: 0.5em;
-  }
-  .controlTitle {
-    color: #666;
-    font-size: 75%;
-    margin-bottom: 0.3em;
-  }
-  .feedback {
-    color: #00aa00;
-    font-size: 90%;
-    font-weight: bold;
-    text-align: center;
-    border-radius: 0.4em;
-    background-color: #272727;
-    margin-top: 0.5em;
-  }
-  .trackTitle {
-    font-size: 130%;
-  }
-  .moduleTitle.trackInfos {
-    margin-bottom: 1em;
-  }
-  </style>
-</head>
-
+  <link href='css/styles.css' rel='stylesheet' type='text/css'>
 <body>
 
   <button id="createTrack">+ Add track</button>
@@ -187,8 +44,8 @@
 
   <div id="aboutModal" class="modal">
     <h1>Stretched and Droned</h1>
-    <p>And fooled around audio material "freely" available on the Internet.</p>
-    <p>Demo built with Web Audio API, and <a href="">paulstretch.js</a></p>
+    <p>Fooled around audio material "freely" available on the Internet.</p>
+    <p>Demo built with Web Audio API, and <a href="https://github.com/sebpiq/paulstretch.js">paulstretch.js</a></p>
     <p><b>Sébastien Piquemal</b> &lt;<a href="http://funktion.fm">http://funktion.fm</a>&gt;</p>
   </div>
 
