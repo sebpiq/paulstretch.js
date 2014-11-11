@@ -1,0 +1,9 @@
+{
+  "name": "stretched-and-droned",
+  "version": "0.0.0",
+  "dependencies": {
+    "ndfft": "0.0.0"
+  },
+  "devDependencies": {},
+  "author": "Sébastien Piquemal"
+}

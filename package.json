@@ -1,0 +1,22 @@
+{
+  "name": "paulstretch",
+  "version": "0.1.0",
+  "author": "Sebastien Piquemal <sebpiq@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+    "ndfft": "0.0.x"
+  },
+  "devDependencies": {
+    "mocha": "1.12.x",
+    "async": "0.2.x",
+    "underscore": "1.5.x",
+    "pcm-boilerplate": "*",
+    "web-audio-api": "*"
+  },
+  "engines": {
+    "node": ">=0.10"
+  }
+}

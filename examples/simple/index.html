@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="js/AudioContextMonkeyPatch.js"></script>
+  <script src="js/paulstretch.js"></script>
+</head>
+
+<body>
+  <audio id="audioSource" src="sounds/miles.wav" controls=""></audio>
+  <form id="config">
+    <input name="ratio" type="text" />
+    <input type="submit" value="change" />
+  </form>
+  <script>
+    var context = new AudioContext
+      , bufferSize = 4096
+      , batchSize = 4
+      , winSize = 4096 * 4
+      , paulstretchWorker = new Worker('js/paulstretch-worker.js')
+      , paulstretchNode = context.createScriptProcessor(bufferSize, 1, 1)
+      , audioSource = document.getElementById('audioSource')
+      , sourceNode = context.createMediaElementSource(audioSource)
+      , blocksIn = [], blocksOut = []
+
+    paulstretchWorker.postMessage({
+      type: 'init',
+      winSize: winSize,
+      numberOfChannels: 1,
+      blockSize: bufferSize,
+      batchSize: batchSize,
+    })
+
+    var configForm = document.getElementById('config')
+    configForm.onsubmit = function() {
+      var ratio = parseFloat(this.elements[0].value)
+      paulstretchWorker.postMessage({ type: 'config', ratio: ratio })
+      return false
+    }
+
+    audioSource.addEventListener('canplay', function() {
+
+      audioSource.play()
+
+      paulstretchWorker.onmessage = function (event) {
+        // Add all the blocks from the batch to the `blocksOut` queue.
+        if (event.data.type === 'read') {
+          var blocks = event.data.data
+          while (blocks.length) blocksOut.push(blocks.shift())
+        }
+      }
+    
+      paulstretchNode.onaudioprocess = function(event) {
+        // Add every incoming block to the `blocksIn` queue
+        blocksIn.push([event.inputBuffer.getChannelData(0)])
+        // If there is any processed block, read it ...
+        if (blocksOut.length)
+          event.outputBuffer.getChannelData(0).set(blocksOut.shift()[0])
+      }
+
+      // Periodically, handle the `blockIn` and `blockOut` queues :
+      // Send `blocksIn` to the worker for future processing and ask for batches that are ready to put in `blocksOut`.
+      setInterval(function() {
+        if (blocksIn.length)
+          paulstretchWorker.postMessage({ type: 'write', data: blocksIn.shift() })
+
+        if (blocksOut.length < batchSize) 
+          paulstretchWorker.postMessage({ type: 'read' })
+      }, 100)
+
+      sourceNode.connect(paulstretchNode)
+      paulstretchNode.connect(context.destination)
+
+    }, true)
+
+
+
+  </script>
+</body>
+
+</html>
