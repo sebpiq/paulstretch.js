@@ -31,7 +31,6 @@
 </head>
 
 <body>
-  <audio id="audioSource" src="sounds/miles.wav"></audio>
   <form id="config">
     <input name="ratio" type="text" />
     <input type="submit" value="change stretch ratio" />
@@ -46,8 +45,8 @@
       , winSize = 4096 * 4
       , paulstretchWorker = new Worker('js/paulstretch-worker.js')
       , paulstretchNode = context.createScriptProcessor(bufferSize, 1, 1)
-      , audioSource = document.getElementById('audioSource')
-      , sourceNode = context.createMediaElementSource(audioSource)
+      , audioSource = new Audio
+      , sourceNode
       , blocksIn = [], blocksOut = []
 
     paulstretchWorker.postMessage({
@@ -66,8 +65,11 @@
     }
 
     audioSource.addEventListener('canplay', function() {
-
+      console.log('audio loaded')
+      sourceNode = context.createMediaElementSource(audioSource)
       audioSource.play()
+      sourceNode.connect(paulstretchNode)
+      paulstretchNode.connect(context.destination)
 
       paulstretchWorker.onmessage = function (event) {
         // Add all the blocks from the batch to the `blocksOut` queue.
@@ -95,12 +97,8 @@
           paulstretchWorker.postMessage({ type: 'read' })
       }, 100)
 
-      sourceNode.connect(paulstretchNode)
-      paulstretchNode.connect(context.destination)
-
     }, true)
-
-
+    audioSource.src = 'sounds/miles.wav'
 
   </script>
 </body>

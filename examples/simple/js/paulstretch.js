@@ -6,6 +6,10 @@ module.exports.PaulStretch = PaulStretch
 if (typeof self !== 'undefined') self.PaulStretch = PaulStretch
 if (typeof window !== 'undefined') window.PaulStretch = PaulStretch
 },{"./lib/PaulStretch":2}],2:[function(require,module,exports){
+// paulstretch.js
+// Copyright (C) 2014 Sébastien Piquemal
+// Copyright (C) 2006-2011 Nasca Octavian Paul
+
 var utils = require('./utils')
   , blockHelpers = require('./block-helpers')
   , arrayHelpers = require('./array-helpers')
@@ -13,7 +17,7 @@ var utils = require('./utils')
 
 var PaulStretch = module.exports = function(numberOfChannels, ratio, winSize) {
 
-  winSize = winSize || 4096
+  this.winSize = winSize = winSize || 4096
   var halfWinSize = winSize / 2
     , samplesIn = new utils.Samples()
     , samplesOut = new utils.Samples()
