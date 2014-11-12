@@ -1,16 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8"> 
   <script src="js/AudioContextMonkeyPatch.js"></script>
   <script src="js/paulstretch.js"></script>
+  <style>
+    button, input {
+      font-family: sans-serif;
+      border: none;
+      background-color: #333;
+      color: #ddd;
+      padding: 0.4em 0.6em;
+      border-radius: 0.2em;
+    }
+    input[type="submit"] {
+      background-color: #444;
+      cursor: pointer;
+    }
+    input[type="submit"]:hover {
+      background-color: #666;
+    }
+    body {
+      color: #ddd;
+      background-color: #111;
+      font-family: sans-serif;
+    }
+
+
+  </style>
 </head>
 
 <body>
-  <audio id="audioSource" src="sounds/miles.wav" controls=""></audio>
+  <audio id="audioSource" src="sounds/miles.wav"></audio>
   <form id="config">
     <input name="ratio" type="text" />
-    <input type="submit" value="change" />
+    <input type="submit" value="change stretch ratio" />
   </form>
+  <p>
+    <a href="https://github.com/sebpiq/paulstretch.js">paulstretch.js</a> simple example. By <a href="http://funktion.fm">Sébastien Piquemal</a>
+  </p>
   <script>
     var context = new AudioContext
       , bufferSize = 4096

@@ -1003,6 +1003,7 @@ var Track = module.exports = function(audioSource) {
   EventEmitter.apply(this)
   var self = this
   this.audioSource = audioSource
+  console.log('Track created, ' + this)
 
   this.blocksIn = []
   this.blocksOut = []
@@ -1026,10 +1027,12 @@ var Track = module.exports = function(audioSource) {
   this.mixerNode = context.createGain()
 
   this.audioSource.addEventListener('error', function(err) {
+    console.log('Load error track, ' + self)
     self.emit('load:error')
   })
 
   this.audioSource.addEventListener('canplay', function() {
+    console.log('Can play track, ' + self)    
     var numberOfChannels = 2
     self.paulstretchWorker = new Worker('./js/paulstretch-worker.js')
     self.paulstretchNode = context.createScriptProcessor(bufferSize, numberOfChannels, numberOfChannels)
@@ -1138,6 +1141,10 @@ Track.prototype.setAmpModShape = function(array) {
   this.ampModulatorNode.buffer = buffer
   this.setAmpModFreq(this.ampModFreq)
   this.ampModulatorNode.start(0)
+}
+
+Track.prototype.toString = function() {
+  return this.audioSource.src.slice(0, 40) + '...'
 }
 },{"./utils":11,"events":1,"util":5}],7:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
@@ -1303,22 +1310,17 @@ $(function() {
   globals.width = $(window).width()
   var trackViewsContainer = $('#trackViews')
     , tracks = []
-    , maxTracks = $('#audioPool audio').length
-
-  var getFreeId = function() {
-    for (var id = 0; id < maxTracks; id++)
-      if (!tracks.some(function(t) { return t.model.id === id })) return id
-  }
+    , maxTracks = 6
 
   var createTrack = function(url, display) {
-    var trackId = getFreeId()
-      , audioSource = $('#audioPool audio')[trackId]
-      , track = {
-        model: new Track(audioSource),
-        view: trackView = new TrackView(trackViewsContainer, display)
-      }
+    var audioSource = new Audio()
+      , track
     audioSource.src = url
-    track.model.id = trackId
+    track = {
+      model: new Track(audioSource),
+      view: trackView = new TrackView(trackViewsContainer, display)
+    }
+
     tracks.push(track)
 
     track.view.on('destroy', function() {

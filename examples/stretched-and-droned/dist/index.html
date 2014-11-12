@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8"> 
   <script src="//connect.soundcloud.com/sdk.js"></script>
@@ -10,19 +11,11 @@
   <script src="js/stretched-and-droned.js"></script>
   <link href='http://fonts.googleapis.com/css?family=Cutive+Mono|Anonymous+Pro|VT323|Share+Tech+Mono' rel='stylesheet' type='text/css'>
   <link href='css/styles.css' rel='stylesheet' type='text/css'>
-<body>
+</head>
 
+<body>
   <button id="createTrack">+ Add track</button>
   <button id="showAbout">About</button>
-
-  <div id="audioPool">
-    <audio src=""></audio>
-    <audio src=""></audio>
-    <audio src=""></audio>
-    <audio src=""></audio>
-    <audio src=""></audio>
-    <audio src=""></audio>
-  </div>
 
   <div id="trackViews"></div>
   
@@ -45,6 +38,7 @@
   <div id="aboutModal" class="modal">
     <h1>Stretched and Droned</h1>
     <p>Fooled around audio material "freely" available on the Internet.</p>
+    <p>This demo works and has been tested in Chrome, but won't work in Firefox <a href="https://github.com/WebAudio/web-audio-api/issues/282">because cross-origin audio is forbidden</a>. So probably it will stop working in versions of Chrome :'(</p>
     <p>Demo built with Web Audio API, and <a href="https://github.com/sebpiq/paulstretch.js">paulstretch.js</a></p>
     <p><b>Sébastien Piquemal</b> &lt;<a href="http://funktion.fm">http://funktion.fm</a>&gt;</p>
   </div>

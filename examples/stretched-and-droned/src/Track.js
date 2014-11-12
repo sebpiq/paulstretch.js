@@ -10,6 +10,7 @@ var Track = module.exports = function(audioSource) {
   EventEmitter.apply(this)
   var self = this
   this.audioSource = audioSource
+  console.log('Track created, ' + this)
 
   this.blocksIn = []
   this.blocksOut = []
@@ -33,10 +34,12 @@ var Track = module.exports = function(audioSource) {
   this.mixerNode = context.createGain()
 
   this.audioSource.addEventListener('error', function(err) {
+    console.log('Load error track, ' + self)
     self.emit('load:error')
   })
 
   this.audioSource.addEventListener('canplay', function() {
+    console.log('Can play track, ' + self)    
     var numberOfChannels = 2
     self.paulstretchWorker = new Worker('./js/paulstretch-worker.js')
     self.paulstretchNode = context.createScriptProcessor(bufferSize, numberOfChannels, numberOfChannels)
@@ -145,4 +148,8 @@ Track.prototype.setAmpModShape = function(array) {
   this.ampModulatorNode.buffer = buffer
   this.setAmpModFreq(this.ampModFreq)
   this.ampModulatorNode.start(0)
+}
+
+Track.prototype.toString = function() {
+  return this.audioSource.src.slice(0, 40) + '...'
 }

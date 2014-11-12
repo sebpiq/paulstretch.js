@@ -11,22 +11,17 @@ $(function() {
   globals.width = $(window).width()
   var trackViewsContainer = $('#trackViews')
     , tracks = []
-    , maxTracks = $('#audioPool audio').length
-
-  var getFreeId = function() {
-    for (var id = 0; id < maxTracks; id++)
-      if (!tracks.some(function(t) { return t.model.id === id })) return id
-  }
+    , maxTracks = 6
 
   var createTrack = function(url, display) {
-    var trackId = getFreeId()
-      , audioSource = $('#audioPool audio')[trackId]
-      , track = {
-        model: new Track(audioSource),
-        view: trackView = new TrackView(trackViewsContainer, display)
-      }
+    var audioSource = new Audio()
+      , track
     audioSource.src = url
-    track.model.id = trackId
+    track = {
+      model: new Track(audioSource),
+      view: trackView = new TrackView(trackViewsContainer, display)
+    }
+
     tracks.push(track)
 
     track.view.on('destroy', function() {
