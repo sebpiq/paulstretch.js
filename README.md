@@ -8,9 +8,10 @@ Just download the latest build in [dist/](https://github.com/sebpiq/paulstretch.
 
 Examples
 ==========
+**NB** : not working on Firefox ... I don't really know why (cross-origin audio maybe for example 2?).
 
 - Example, stretching a sample from a web worker : http://sebpiq.github.io/paulstretch.js/examples/simple/index.html
-- More fun example, creating drones with tracks from SoundCloud (works only on Chrome because of cross-origin audio) : http://sebpiq.github.io/paulstretch.js/examples/stretched-and-droned/dist/index.html
+- More fun example, creating drones with tracks from SoundCloud : http://sebpiq.github.io/paulstretch.js/examples/stretched-and-droned/dist/index.html
 
 Run tests
 ==============
