@@ -1307,12 +1307,10 @@ var globals = require('./globals')
   , TrackView = require('./TrackView')
   , soundSources = require('./soundSources')
 
-
 $(function() {
   nx.colorize("#009ee0")
   nx.colorize("border", "#272727")
   nx.colorize("fill", "#272727")
-
 
   globals.width = $(window).width()
   var trackViewsContainer = $('#trackViews')
@@ -1392,11 +1390,9 @@ $(function() {
   $('#record').click(function() {
     if (!rcding) {
       startRecording(this);
-      console.log('rec start');
       rcding=!rcding;
     } else {
       stopRecording(this);
-      console.log('rec stop');
       rcding=!rcding;
     }
   })
