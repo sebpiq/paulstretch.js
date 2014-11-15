@@ -84,7 +84,7 @@
   }
 
   #rec {
-    position:absolute;
+    position:fixed;
     bottom:1em;
     right:1em;
     font-family: 'Anonymous Pro';

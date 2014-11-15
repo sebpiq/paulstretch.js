@@ -1407,7 +1407,7 @@ $(function() {
   function stopRecording(button) {
     Rec.stop();
     $(button).html("Record")
-    $(button).css("color",txtcol);
+    $(button).css("color","#00aa00");
     
     createDownload();
     Rec.clear();
