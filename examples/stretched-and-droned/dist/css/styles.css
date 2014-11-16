@@ -70,35 +70,34 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.3);
   }
-  #createTrack, #showAbout, #record {
+  #createTrack, #showAbout, #toggleRec {
     font-weight: bold;
-    position: absolute;
-    right: 1em;
-    top: 1em;
     min-height: 2em;
     min-width: 10em;
     outline:none;
+  }
+  #createTrack, #showAbout {
+    position: fixed;
+    right: 1em;
+    top: 1em;
   }
   #showAbout {
     top: 4em;
   }
 
-  #rec {
-    position:fixed;
-    bottom:1em;
-    right:1em;
-    font-family: 'Anonymous Pro';
-    font-size:0.7em;
-    width:10em;
+  #recContainer {
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    font-size: 0.7em;
+    text-align: right;
   }
 
-  #record {
-    position:relative;
-    top:0px;
-    right:0px;
+  #toggleRec.recording {
+    color: red;
   }
 
-  .reclink {
+  .downloadRec {
     border-radius:4px;
     padding:3px 6px 3px 9px;
     background-color:#333;

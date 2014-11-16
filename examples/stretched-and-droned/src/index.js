@@ -4,9 +4,9 @@ var globals = require('./globals')
   , soundSources = require('./soundSources')
 
 $(function() {
-  nx.colorize("#009ee0")
-  nx.colorize("border", "#272727")
-  nx.colorize("fill", "#272727")
+  nx.colorize('#009ee0')
+  nx.colorize('border', '#272727')
+  nx.colorize('fill', '#272727')
 
   globals.width = $(window).width()
   var trackViewsContainer = $('#trackViews')
@@ -78,6 +78,32 @@ $(function() {
 
   new soundSources.SoundCloudSourceView($('#soundCloudSource'))
   //new soundSources.FreeSoundSourceView($('#freesoundSource'))
+
+  $('#toggleRec').click(function() {
+    var button = $(this)
+    if (!button.hasClass('recording')) {
+      globals.recorder.record()
+      button.html('Recording...')
+      button.addClass('recording')
+    } else {
+      globals.recorder.stop()
+      button.html('Record')
+      button.removeClass('recording')
+      createDownload()
+      globals.recorder.clear()
+    }
+  })
+
+  var createDownload = function() {
+    globals.recorder.exportWAV(function(blob) {
+      var url = URL.createObjectURL(blob)
+      var hf = $('<a>', {
+        href: url,
+        class: 'downloadRec',
+        download: new Date().toISOString() + '.wav'
+      }).html($('#recContainer .downloadRec').length + 1).appendTo('#recContainer')
+    })
+  }
 
 })
 SC.initialize({ client_id: globals.scToken })

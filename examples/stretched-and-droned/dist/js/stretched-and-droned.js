@@ -989,18 +989,19 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require("8+0biL"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":4,"8+0biL":3,"inherits":2}],6:[function(require,module,exports){
+}).call(this,require("L0K7bS"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":4,"L0K7bS":3,"inherits":2}],6:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
   , inherits = require('util').inherits
   , utils = require('./utils')
+  , globals = require('./globals')
   , context = new AudioContext
   , bufferSize = 4096
   , batchSize = 4
   , winSize = 4096 * 4
-  , bus = context.createGain();
-  bus.connect(context.destination);
-  window.Rec = new Recorder(bus);
+  , recorderBus = context.createGain()
+recorderBus.connect(context.destination)
+globals.recorder = new Recorder(recorderBus)
 
 var Track = module.exports = function(audioSource) {
   EventEmitter.apply(this)
@@ -1028,8 +1029,6 @@ var Track = module.exports = function(audioSource) {
   this.filterNode.Q.value = this.filterQ
   this.filterNode.frequency.value = this.filterFreq
   this.mixerNode = context.createGain()
-  this.recorderNode = bus;
-
 
   this.audioSource.addEventListener('error', function(err) {
     console.log('Load error track, ' + self)
@@ -1091,7 +1090,7 @@ var Track = module.exports = function(audioSource) {
     self.paulstretchNode.connect(self.ampGainNode)
     self.ampGainNode.connect(self.filterNode)
     self.filterNode.connect(self.mixerNode)
-    self.mixerNode.connect(self.recorderNode)
+    self.mixerNode.connect(recorderBus)
 
     self.emit('load:ready')
   }, true)
@@ -1151,7 +1150,7 @@ Track.prototype.setAmpModShape = function(array) {
 Track.prototype.toString = function() {
   return this.audioSource.src.slice(0, 40) + '...'
 }
-},{"./utils":11,"events":1,"util":5}],7:[function(require,module,exports){
+},{"./globals":8,"./utils":11,"events":1,"util":5}],7:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter
   , globals = require('./globals')
   , inherits = require('util').inherits
@@ -1308,9 +1307,9 @@ var globals = require('./globals')
   , soundSources = require('./soundSources')
 
 $(function() {
-  nx.colorize("#009ee0")
-  nx.colorize("border", "#272727")
-  nx.colorize("fill", "#272727")
+  nx.colorize('#009ee0')
+  nx.colorize('border', '#272727')
+  nx.colorize('fill', '#272727')
 
   globals.width = $(window).width()
   var trackViewsContainer = $('#trackViews')
@@ -1383,47 +1382,30 @@ $(function() {
   new soundSources.SoundCloudSourceView($('#soundCloudSource'))
   //new soundSources.FreeSoundSourceView($('#freesoundSource'))
 
-
-  /* recording */
-
-  var rcding = false;
-  $('#record').click(function() {
-    if (!rcding) {
-      startRecording(this);
-      rcding=!rcding;
+  $('#toggleRec').click(function() {
+    var button = $(this)
+    if (!button.hasClass('recording')) {
+      globals.recorder.record()
+      button.html('Recording...')
+      button.addClass('recording')
     } else {
-      stopRecording(this);
-      rcding=!rcding;
+      globals.recorder.stop()
+      button.html('Record')
+      button.removeClass('recording')
+      createDownload()
+      globals.recorder.clear()
     }
   })
 
-  var txtcol = $('#record').css("color");
-  function startRecording(button) {
-    Rec.record();
-    $(button).html("Recording...")
-    $(button).css("color","red")
-  }
-
-  function stopRecording(button) {
-    Rec.stop();
-    $(button).html("Record")
-    $(button).css("color","#00aa00");
-    
-    createDownload();
-    Rec.clear();
-  }
-
-  var reccnt = 0;
-  function createDownload() {
-    Rec.exportWAV(function(blob) {
-      var url = URL.createObjectURL(blob);
-      var hf = document.createElement('a');
-      hf.href = url;
-      hf.download = new Date().toISOString() + '.wav';
-      hf.innerHTML = reccnt++;
-      hf.className = "reclink";
-      $("#rec")[0].appendChild(hf);
-    });
+  var createDownload = function() {
+    globals.recorder.exportWAV(function(blob) {
+      var url = URL.createObjectURL(blob)
+      var hf = $('<a>', {
+        href: url,
+        class: 'downloadRec',
+        download: new Date().toISOString() + '.wav'
+      }).html($('#recContainer .downloadRec').length + 1).appendTo('#recContainer')
+    })
   }
 
 })

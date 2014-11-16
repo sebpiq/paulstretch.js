@@ -1,10 +1,14 @@
 var EventEmitter = require('events').EventEmitter
   , inherits = require('util').inherits
   , utils = require('./utils')
+  , globals = require('./globals')
   , context = new AudioContext
   , bufferSize = 4096
   , batchSize = 4
   , winSize = 4096 * 4
+  , recorderBus = context.createGain()
+recorderBus.connect(context.destination)
+globals.recorder = new Recorder(recorderBus)
 
 var Track = module.exports = function(audioSource) {
   EventEmitter.apply(this)
@@ -93,7 +97,7 @@ var Track = module.exports = function(audioSource) {
     self.paulstretchNode.connect(self.ampGainNode)
     self.ampGainNode.connect(self.filterNode)
     self.filterNode.connect(self.mixerNode)
-    self.mixerNode.connect(context.destination)
+    self.mixerNode.connect(recorderBus)
 
     self.emit('load:ready')
   }, true)
