@@ -998,6 +998,9 @@ var EventEmitter = require('events').EventEmitter
   , bufferSize = 4096
   , batchSize = 4
   , winSize = 4096 * 4
+  , bus = context.createGain();
+  bus.connect(context.destination);
+  window.Rec = new Recorder(bus);
 
 var Track = module.exports = function(audioSource) {
   EventEmitter.apply(this)
@@ -1025,6 +1028,8 @@ var Track = module.exports = function(audioSource) {
   this.filterNode.Q.value = this.filterQ
   this.filterNode.frequency.value = this.filterFreq
   this.mixerNode = context.createGain()
+  this.recorderNode = bus;
+
 
   this.audioSource.addEventListener('error', function(err) {
     console.log('Load error track, ' + self)
@@ -1086,7 +1091,7 @@ var Track = module.exports = function(audioSource) {
     self.paulstretchNode.connect(self.ampGainNode)
     self.ampGainNode.connect(self.filterNode)
     self.filterNode.connect(self.mixerNode)
-    self.mixerNode.connect(context.destination)
+    self.mixerNode.connect(self.recorderNode)
 
     self.emit('load:ready')
   }, true)
@@ -1377,6 +1382,49 @@ $(function() {
 
   new soundSources.SoundCloudSourceView($('#soundCloudSource'))
   //new soundSources.FreeSoundSourceView($('#freesoundSource'))
+
+
+  /* recording */
+
+  var rcding = false;
+  $('#record').click(function() {
+    if (!rcding) {
+      startRecording(this);
+      rcding=!rcding;
+    } else {
+      stopRecording(this);
+      rcding=!rcding;
+    }
+  })
+
+  var txtcol = $('#record').css("color");
+  function startRecording(button) {
+    Rec.record();
+    $(button).html("Recording...")
+    $(button).css("color","red")
+  }
+
+  function stopRecording(button) {
+    Rec.stop();
+    $(button).html("Record")
+    $(button).css("color","#00aa00");
+    
+    createDownload();
+    Rec.clear();
+  }
+
+  var reccnt = 0;
+  function createDownload() {
+    Rec.exportWAV(function(blob) {
+      var url = URL.createObjectURL(blob);
+      var hf = document.createElement('a');
+      hf.href = url;
+      hf.download = new Date().toISOString() + '.wav';
+      hf.innerHTML = reccnt++;
+      hf.className = "reclink";
+      $("#rec")[0].appendChild(hf);
+    });
+  }
 
 })
 SC.initialize({ client_id: globals.scToken })

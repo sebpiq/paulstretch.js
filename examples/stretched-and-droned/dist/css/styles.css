@@ -70,16 +70,42 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.3);
   }
-  #createTrack, #showAbout {
+  #createTrack, #showAbout, #record {
     font-weight: bold;
     position: absolute;
     right: 1em;
     top: 1em;
     min-height: 2em;
     min-width: 10em;
+    outline:none;
   }
   #showAbout {
     top: 4em;
+  }
+
+  #rec {
+    position:fixed;
+    bottom:1em;
+    right:1em;
+    font-family: 'Anonymous Pro';
+    font-size:0.7em;
+    width:10em;
+  }
+
+  #record {
+    position:relative;
+    top:0px;
+    right:0px;
+  }
+
+  .reclink {
+    border-radius:4px;
+    padding:3px 6px 3px 9px;
+    background-color:#333;
+    float:left;
+    margin:10px 6px 0px 0px;
+    color:#00bb00;
+    text-decoration:none;
   }
   
   .track.loading .loader {
