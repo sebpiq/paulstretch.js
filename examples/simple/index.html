@@ -40,6 +40,7 @@
   </p>
   <script>
     var context = new AudioContext
+      , numberOfChannels = 1
       , bufferSize = 4096
       , batchSize = 4
       , winSize = 4096 * 4
@@ -80,11 +81,19 @@
       }
     
       paulstretchNode.onaudioprocess = function(event) {
+        var ch, block = []
+
         // Add every incoming block to the `blocksIn` queue
-        blocksIn.push([event.inputBuffer.getChannelData(0)])
-        // If there is any processed block, read it ...
-        if (blocksOut.length)
-          event.outputBuffer.getChannelData(0).set(blocksOut.shift()[0])
+        for (ch = 0; ch < numberOfChannels; ch++)
+          block.push(event.inputBuffer.getChannelData(ch))
+        blocksIn.push(block)
+        
+        // If there is any processed block, play it back ...
+        if (self.blocksOut.length) {
+          block = self.blocksOut.shift()
+          for (ch = 0; ch < numberOfChannels; ch++)
+            event.outputBuffer.getChannelData(ch).set(block[ch])
+        }
       }
 
       // Periodically, handle the `blockIn` and `blockOut` queues :

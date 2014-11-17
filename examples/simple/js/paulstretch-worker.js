@@ -34,16 +34,17 @@ onmessage = function (event) {
   case 'read':
     var i
 
-    // Process until we have more than `batchSize` blocks,
-    // or until we don't have enough frames to process. 
-    while ((paulStretch.readQueueLength() < (batchSize * blockSize)) 
-      && (paulStretch.process() !== 0)) paulStretch.readQueueLength()
-
     // Reads and sends `batchSize` blocks or gives up for now
     if (Math.floor(paulStretch.readQueueLength() / blockSize) >= batchSize) {
       for (i = 0; i < batchSize; i++) paulStretch.read(blocksOut[i])
       postMessage({ type: 'read', data: blocksOut })
     } else debug('not enough blocks ready')
+
+    // Process until we have more than `batchSize` blocks,
+    // or until we don't have enough frames to process. 
+    while ((paulStretch.readQueueLength() < (batchSize * blockSize)) 
+      && (paulStretch.process() !== 0)) paulStretch.readQueueLength()
+
     break
 
   // Just write the incoming blocks to the write queue
