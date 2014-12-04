@@ -1,9 +1,38 @@
-var globals = require('./globals')
-  , Track = require('./Track')
-  , TrackView = require('./TrackView')
-  , soundSources = require('./soundSources')
-
 $(function() {
+
+  var hideModal = function() {
+    $('.modal').fadeOut()
+    $('#modalOverlay').fadeOut()    
+  }
+
+  var showModal = function(selector) {
+    $('.modal').hide()
+    $(selector).fadeIn()
+    $('#modalOverlay').fadeIn()
+  }
+
+  $('#modalOverlay').click(hideModal.bind(this))
+  $('#showAbout').click(showModal.bind(this, '#aboutModal'))
+  
+  // Feature and browser detection
+  if (!window.AudioContext) {
+    showModal('#noWebAudioAPIError')
+    $('#createTrack').hide()
+    $('#recContainer').hide()
+    return 
+  } else if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+    showModal('#firefoxError')
+    $('#createTrack').hide()
+    $('#recContainer').hide()
+    return
+  }
+
+  // Initializing the app
+  var globals = require('./globals')
+    , Track = require('./Track')
+    , TrackView = require('./TrackView')
+    , soundSources = require('./soundSources')
+
   nx.colorize('#009ee0')
   nx.colorize('border', '#272727')
   nx.colorize('fill', '#272727')
@@ -52,24 +81,12 @@ $(function() {
     track.model.on('load:error', track.view.setError.bind(track.view))
   }
 
-  var hideModal = function() {
-    $('.modal').fadeOut()
-    $('#modalOverlay').fadeOut()    
-  }
-
-  var showModal = function(selector) {
-    $('.modal').hide()
-    $(selector).fadeIn()
-    $('#modalOverlay').fadeIn()
-  }
 
   $('#createTrack').click(function() {
     if (tracks.length < maxTracks) showModal('#soundSourcesModal')
     else showModal('#maxTracksReachedModal')
   })
 
-  $('#modalOverlay').click(hideModal.bind(this, '#soundSourcesModal'))
-  $('#showAbout').click(showModal.bind(this, '#aboutModal'))
 
   soundSources.emitter.on('selected', function(r) {
     createTrack(r.url, r.display)
@@ -77,6 +94,7 @@ $(function() {
   })
 
   new soundSources.SoundCloudSourceView($('#soundCloudSource'))
+  SC.initialize({ client_id: globals.scToken })
   //new soundSources.FreeSoundSourceView($('#freesoundSource'))
 
   $('#toggleRec').click(function() {
@@ -106,4 +124,3 @@ $(function() {
   }
 
 })
-SC.initialize({ client_id: globals.scToken })
