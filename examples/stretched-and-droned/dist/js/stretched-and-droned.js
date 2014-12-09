@@ -1348,6 +1348,7 @@ $(function() {
   var createTrack = function(url, display) {
     var audioSource = new Audio()
       , track
+    audioSource.crossOrigin = 'anonymous'
     audioSource.src = url
     track = {
       model: new Track(audioSource),
