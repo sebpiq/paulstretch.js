@@ -15,16 +15,20 @@ $(function() {
   $('#showAbout').click(showModal.bind(this, '#aboutModal'))
   
   // Feature and browser detection
+  var ffResult, ffVersion
   if (!window.AudioContext) {
     showModal('#noWebAudioAPIError')
     $('#createTrack').hide()
     $('#recContainer').hide()
     return 
-  } else if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-    showModal('#firefoxError')
-    $('#createTrack').hide()
-    $('#recContainer').hide()
-    return
+  } else if (ffResult = /firefox\/([0-9]+)/.exec(navigator.userAgent.toLowerCase())) {
+    ffVersion = parseInt(ffResult[1])
+    if (ffVersion < 37) {
+      showModal('#firefoxError')
+      $('#createTrack').hide()
+      $('#recContainer').hide()
+      return
+    }
   }
 
   // Initializing the app

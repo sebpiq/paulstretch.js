@@ -50,13 +50,12 @@
   </div>
 
   <div id="firefoxError" class="modal">
-    <h1>Ouch ... you are using Firefox!</h1>
-    <p>I love Firefox ... and I know it supports Web Audio API. But for the moment you will have to use Chrome as I haven't managed to get this demo working with Firefox.</p>
-    <p>If you are very clever and have an idea why it doesn't work there, I'd be happy to get some pointers!</p>
+    <h1>Only Firefox >= 37 is supported!</h1>
+    <p>In Firefox, a bug with <b>MediaElementAudioSourceNode</b> prevents this demo from working. This is fixed in <b>Firefox 37.0+</b> , so please upgrade Firefox!</p>
   </div>
 
   <div id="noWebAudioAPIError" class="modal">
-    <h1>This browser doesn't support Web AUdio API!</h1>
+    <h1>This browser doesn't support Web Audio API!</h1>
     <p>Sorry my friend, you will have to use another browser. Try Chrome!</p>
   </div>
 </body>
