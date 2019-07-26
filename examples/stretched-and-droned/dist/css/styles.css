@@ -1,103 +1,225 @@
-  a, a:visited {
+* {
+    box-sizing: border-box;
+}
+
+a, a:visited {
     color: #009ee0;
-  }
-  body {
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body {
     background-color: #111;
     font-family: 'Anonymous Pro';
     color: #666;
-  }
-  h2, h1 {
+}
+
+h2, h1 {
     margin: 0;
     color: #009ee0;
     text-transform: uppercase;
-  }
-  h1 {
+}
+
+h1 {
     margin-bottom: 1em;
-  }
-  input {
+}
+
+input {
     color: #aaa;
-  }
-  button {
+}
+
+button {
     cursor: pointer;
-  }
-  button, input {
+}
+
+button, input {
     background-color: #333;
     border: none;
     padding: 0.4em 1em; 
-  }
-  button, input[type="submit"] {
+}
+
+button, input[type="submit"] {
     font-family: 'Anonymous Pro';
     border-radius: 0.4em;
     color: #00aa00;
     text-transform: uppercase;
-  }
-  .invisible {
+}
+
+.invisible {
     visibility: hidden;
-  }
-  .modal {
+}
+
+.fullScreen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/*vvvvvvvvvvvvvvvvvv MODALS vvvvvvvvvvvvvvvvvv*/
+#modalOverlay {
+    display: none;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+#modalContainer {
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalContainer.visible {
+    display: flex;
+}
+
+.modal {
+    z-index: 3;
     display: none;
     color: white;
-    position: absolute;
-    top: 25%;
-    left: 25%;
     width: 50%;
     height: 50%;
     background-color: rgba(80, 80, 80, 0.7);
     padding: 2em;
-  }
-  #soundSourcesModal h2 {
-    display: inline-block;
-  }
-  #maxTracksReachedModal {
-  }
-  .soundSource form {
-    display: inline-block;
-    float: right;
-  }
-  .searchResults {
-    margin-top: 4em;
-  }
-  .searchResult {
-    padding: 0.1em 0.2em;
-    cursor: pointer;
-  }
-  #modalOverlay {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
+}
+
+.soundSource {
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-  #createTrack, #showAbout, #toggleRec {
+    display: flex;
+    flex-direction: column;
+}
+
+.soundSource .header {
+    padding-bottom: 1em;
+    display: flex;
+    justify-content: space-between;
+}
+
+.soundSource .header form {
+    text-align: right;
+}
+
+.soundSource .header form input {
+    display: inline-block;
+}
+
+.soundSource .searchResults {
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    padding-left: 1.5em;
+    list-style-type: circle;
+}
+
+.soundSource .searchResult {
+    padding: 0.1em 0.2em;
+    cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+    .modal {
+        width: 80%;
+        font-size: 80%;
+    }
+    .soundSource .header form {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .soundSource .header form input[type="text"] {
+        margin-right: 1em;
+        width: 80%;
+    }
+
+    .soundSource .searchResult {
+        padding: 1em 0;
+    }
+}
+
+@media (max-width: 650px) {
+    .soundSource .header {
+        display: block;
+    }
+
+    .soundSource .header form {
+        margin-top: 1em;
+    }
+}
+/*^^^^^^^^^^^^^^^^^^^^ MODALS ^^^^^^^^^^^^^^^^^^^^^^*/
+
+/*vvvvvvvvvvvvvvvvvv TOP MENU vvvvvvvvvvvvvvvvvv*/
+#createTrack, #showAbout, #toggleRec {
     font-weight: bold;
     min-height: 2em;
     min-width: 10em;
     outline:none;
-  }
-  #createTrack, #showAbout {
+}
+
+#createTrack {
+    margin-bottom: 0.35em;
+}
+
+#topMenu {
+    display: flex;
+    flex-direction: column;
     position: fixed;
-    right: 1em;
-    top: 1em;
-  }
-  #showAbout {
+    right: 0.35em;
+    top: 0.35em;
+}
+
+#topMenu button {
+    margin-bottom: 0.35em
+}
+
+#topMenu button:last-child {
+    margin-bottom: 0;
+}
+
+#showAbout {
     top: 4em;
-  }
+}
 
-  #recContainer {
+@media (max-width: 1100px) {
+
+    #topMenu {
+        position: initial;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.35em;
+    }
+
+    #topMenu button {
+        flex-grow: 1;
+        margin: 0;
+        margin-right: 0.3em
+    }
+
+    #topMenu button:last-child {
+        margin-right: 0;
+    }
+
+}
+/*^^^^^^^^^^^^^^^^^^^^ TOP MENU ^^^^^^^^^^^^^^^^^^^^^^*/
+
+#recContainer {
     position: fixed;
-    bottom: 1em;
-    right: 1em;
-    font-size: 0.7em;
+    bottom: 0.35em;
+    right: 0.35em;
     text-align: right;
-  }
+}
 
-  #toggleRec.recording {
+#toggleRec.recording {
     color: red;
-  }
+}
 
-  .downloadRec {
+.downloadRec {
     border-radius:4px;
     padding:3px 6px 3px 9px;
     background-color:#333;
@@ -105,20 +227,23 @@
     margin:10px 6px 0px 0px;
     color:#00bb00;
     text-decoration:none;
-  }
-  
-  .track.loading .loader {
+}
+
+.track.loading .loader {
     display: block;
-  }
-  .track.errored .errorMessage {
+}
+
+.track.errored .errorMessage {
     display: block;
-  }
-  .loader, .errorMessage {
+}
+
+.loader, .errorMessage {
     display: none;
     background-color: rgba(0, 0, 0, 0.65);
     position: absolute;
-  }
-  .loaderText, .errorText {
+}
+
+.loaderText, .errorText {
     width: 100%;
     text-align: center;
     position: relative;
@@ -126,36 +251,44 @@
     font-size: 200%;
     text-transform: uppercase;
     color: #00aa00;
-  }
-  button.cancelLoad {
+}
+
+button.cancelLoad {
     position: relative;
     bottom: 0.5em;
-  }
-  .module {
+}
+
+.module {
     display: inline-block;
     padding: 0.8em;
-    margin: 0.35em;
+    margin-bottom: 0.35em;
+    margin-left: 0.35em;
     background-color: #1c1c1c;
     border-radius: 1.5em;
-  }
-  .moduleTitle {
+}
+
+.moduleTitle {
     font-weight: bold;
     text-transform: uppercase;
     font-size: 80%;
     border-bottom: 1px solid #666;
-  }
-  .control {
+}
+
+.control {
     display: inline-block;
     text-align: center;
     min-width: 5em;
     padding: 0.5em;
-  }
-  .controlTitle {
+    touch-action: none; /* prevent unwanted scrolling when changing control on mobile */
+}
+
+.controlTitle {
     color: #666;
     font-size: 75%;
     margin-bottom: 0.3em;
-  }
-  .feedback {
+}
+
+.feedback {
     color: #00aa00;
     font-size: 90%;
     font-weight: bold;
@@ -163,10 +296,12 @@
     border-radius: 0.4em;
     background-color: #272727;
     margin-top: 0.5em;
-  }
-  .trackTitle {
+}
+
+.trackTitle {
     font-size: 130%;
-  }
-  .moduleTitle.trackInfos {
+}
+
+.moduleTitle.trackInfos {
     margin-bottom: 1em;
-  }
+}

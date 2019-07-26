@@ -2,62 +2,74 @@
 <html>
 
 <head>
-  <meta charset="UTF-8"> 
-  <script src="//connect.soundcloud.com/sdk.js"></script>
-  <script src="js/jquery-2.1.1.min.js"></script>
-  <script src="js/AudioContextMonkeyPatch.js"></script>
-  <script src="js/paulstretch.js"></script>
-  <script src="js/nexusUI.js"></script>
-  <script src="js/recorder.js"></script>
-  <script src="js/stretched-and-droned.js"></script>
-  <link href='https://fonts.googleapis.com/css?family=Cutive+Mono|Anonymous+Pro|VT323|Share+Tech+Mono' rel='stylesheet' type='text/css'>
-  <link href='css/styles.css' rel='stylesheet' type='text/css'>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="//connect.soundcloud.com/sdk.js"></script>
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/AudioContextMonkeyPatch.js"></script>
+    <script src="js/paulstretch.js"></script>
+    <script src="js/nexusUI.js"></script>
+    <script src="js/recorder.js"></script>
+    <script src="js/stretched-and-droned.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Cutive+Mono|Anonymous+Pro|VT323|Share+Tech+Mono' rel='stylesheet' type='text/css'>
+    <link href='css/styles.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
-  <button id="createTrack">+ Add track</button>
-  <button id="showAbout">About</button>
-
-  <div id="recContainer">
-    <button id="toggleRec">Record</button>
-    <div style="clear:both"></div>
-  </div>
-
-  <div id="trackViews"></div>
-  
-  <div id="modalOverlay"></div>
-  <div id="soundSourcesModal" class="modal">
-    <div id="soundCloudSource" class="soundSource">
-      <h2>From SoundCloud</h2>
-      <form>
-        <input type="text" placeholder="type a search" />
-        <input type="submit" value="Search"/>
-      </form>
-      <ul class="searchResults"></ul>
+    <div id="topMenu">
+        <button id="createTrack">+ Add track</button>
+        <button id="showAbout">About</button>
     </div>
-  </div>
 
-  <div id="maxTracksReachedModal" class="modal">
-    Max numer of tracks was reached! Please remove a track before you can add a new one.
-  </div>
+    <div id="recContainer">
+        <button id="toggleRec">Record</button>
+        <div style="clear:both"></div>
+    </div>
+    
+    <div id="trackViews"></div>
+    
+    <div id="modalOverlay" class="fullScreen"></div>
 
-  <div id="aboutModal" class="modal">
-    <h1>Stretched and Droned</h1>
-    <p>Fooled around audio material "freely" available on the Internet.</p>
-    <p>Demo built with Web Audio API, and <a href="https://github.com/sebpiq/paulstretch.js">paulstretch.js</a></p>
-    <p><b>Sébastien Piquemal</b> &lt;<a href="http://funktion.fm">http://funktion.fm</a>&gt;</p>
-    <p><b>NB:</b> This works only in Chrome for now</p>
-  </div>
+    <div id="modalContainer" class="fullScreen">
 
-  <div id="firefoxError" class="modal">
-    <h1>Only Firefox >= 37 is supported!</h1>
-    <p>In Firefox, a bug with <b>MediaElementAudioSourceNode</b> prevents this demo from working. This is fixed in <b>Firefox 37.0+</b> , so please upgrade Firefox!</p>
-  </div>
+        <div id="soundSourcesModal" class="modal">
+            <div id="soundCloudSource" class="soundSource">
+                <div class="header">
+                    <h2>From SoundCloud</h2>
+                    <form>
+                        <input type="text" placeholder="type a search" />
+                        <input type="submit" value="Search"/>
+                    </form>
+                </div>
+                <ul class="searchResults"></ul>
+            </div>
+        </div>
+    
+        <div id="maxTracksReachedModal" class="modal">
+            Max numer of tracks was reached! Please remove a track before you can add a new one.
+        </div>
+        
+        <div id="aboutModal" class="modal">
+            <h1>Stretched and Droned</h1>
+            <p>Fooled around audio material "freely" available on the Internet.</p>
+            <p>Demo built with Web Audio API, and <a href="https://github.com/sebpiq/paulstretch.js">paulstretch.js</a></p>
+            <p><b>Sébastien Piquemal</b> &lt;<a href="http://funktion.fm">http://funktion.fm</a>&gt;</p>
+            <p><b>NB:</b>Not working on Internet Explorer</p>
+        </div>
+        
+        <div id="firefoxError" class="modal">
+            <h1>Only Firefox >= 37 is supported!</h1>
+            <p>In Firefox, a bug with <b>MediaElementAudioSourceNode</b> prevents this demo from working. This is fixed in <b>Firefox 37.0+</b> , so please upgrade Firefox!</p>
+        </div>
+        
+        <div id="noWebAudioAPIError" class="modal">
+            <h1>This browser doesn't support Web Audio API!</h1>
+            <p>Sorry my friend, you will have to use another browser. Try Chrome!</p>
+        </div>
 
-  <div id="noWebAudioAPIError" class="modal">
-    <h1>This browser doesn't support Web Audio API!</h1>
-    <p>Sorry my friend, you will have to use another browser. Try Chrome!</p>
-  </div>
+    </div>
+
 </body>
 
 </html>

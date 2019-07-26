@@ -1,115 +1,115 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8"> 
-  <script src="js/AudioContextMonkeyPatch.js"></script>
-  <script src="js/paulstretch.js"></script>
-  <style>
-    button, input {
-      font-family: sans-serif;
-      border: none;
-      background-color: #333;
-      color: #ddd;
-      padding: 0.4em 0.6em;
-      border-radius: 0.2em;
-    }
-    input[type="submit"] {
-      background-color: #444;
-      cursor: pointer;
-    }
-    input[type="submit"]:hover {
-      background-color: #666;
-    }
-    body {
-      color: #ddd;
-      background-color: #111;
-      font-family: sans-serif;
-    }
-
-
-  </style>
+    <meta charset="UTF-8"> 
+    <script src="js/AudioContextMonkeyPatch.js"></script>
+    <script src="js/paulstretch.js"></script>
+    <style>
+        button, input {
+            font-family: sans-serif;
+            border: none;
+            background-color: #333;
+            color: #ddd;
+            padding: 0.4em 0.6em;
+            border-radius: 0.2em;
+        }
+        input[type="submit"] {
+            background-color: #444;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #666;
+        }
+        body {
+            color: #ddd;
+            background-color: #111;
+            font-family: sans-serif;
+        }
+        
+        
+    </style>
 </head>
 
 <body>
-  <form id="config">
-    <input name="ratio" type="text" />
-    <input type="submit" value="change stretch ratio" />
-  </form>
-  <p>
-    <a href="https://github.com/sebpiq/paulstretch.js">paulstretch.js</a> simple example. By <a href="http://funktion.fm">Sébastien Piquemal</a>
-  </p>
-  <script>
-    var context = new AudioContext
-      , numberOfChannels = 1
-      , bufferSize = 4096
-      , batchSize = 4
-      , winSize = 4096 * 4
-      , paulstretchWorker = new Worker('js/paulstretch-worker.js')
-      , paulstretchNode = context.createScriptProcessor(bufferSize, 1, 1)
-      , audioSource = new Audio
-      , sourceNode
-      , blocksIn = [], blocksOut = []
-
-    paulstretchWorker.postMessage({
-      type: 'init',
-      winSize: winSize,
-      numberOfChannels: 1,
-      blockSize: bufferSize,
-      batchSize: batchSize,
-    })
-
-    var configForm = document.getElementById('config')
-    configForm.onsubmit = function() {
-      var ratio = parseFloat(this.elements[0].value)
-      paulstretchWorker.postMessage({ type: 'config', ratio: ratio })
-      return false
-    }
-
-    audioSource.addEventListener('canplay', function() {
-      console.log('audio loaded')
-      sourceNode = context.createMediaElementSource(audioSource)
-      audioSource.play()
-      sourceNode.connect(paulstretchNode)
-      paulstretchNode.connect(context.destination)
-
-      paulstretchWorker.onmessage = function (event) {
-        // Add all the blocks from the batch to the `blocksOut` queue.
-        if (event.data.type === 'read') {
-          var blocks = event.data.data
-          while (blocks.length) blocksOut.push(blocks.shift())
-        }
-      }
-    
-      paulstretchNode.onaudioprocess = function(event) {
-        var ch, block = []
-
-        // Add every incoming block to the `blocksIn` queue
-        for (ch = 0; ch < numberOfChannels; ch++)
-          block.push(event.inputBuffer.getChannelData(ch))
-        blocksIn.push(block)
+    <form id="config">
+        <input name="ratio" type="text" />
+        <input type="submit" value="change stretch ratio" />
+    </form>
+    <p>
+        <a href="https://github.com/sebpiq/paulstretch.js">paulstretch.js</a> simple example. By <a href="http://funktion.fm">Sébastien Piquemal</a>
+    </p>
+    <script>
+        var context = new AudioContext
+        var numberOfChannels = 1
+        var bufferSize = 4096
+        var batchSize = 4
+        var winSize = 4096 * 4
+        var paulstretchWorker = new Worker('js/paulstretch-worker.js')
+        var paulstretchNode = context.createScriptProcessor(bufferSize, 1, 1)
+        var audioSource = new Audio
+        var sourceNode
+        var blocksIn = [], blocksOut = []
         
-        // If there is any processed block, play it back ...
-        if (self.blocksOut.length) {
-          block = self.blocksOut.shift()
-          for (ch = 0; ch < numberOfChannels; ch++)
-            event.outputBuffer.getChannelData(ch).set(block[ch])
+        paulstretchWorker.postMessage({
+            type: 'init',
+            winSize: winSize,
+            numberOfChannels: 1,
+            blockSize: bufferSize,
+            batchSize: batchSize,
+        })
+        
+        var configForm = document.getElementById('config')
+        configForm.onsubmit = function() {
+            var ratio = parseFloat(this.elements[0].value)
+            paulstretchWorker.postMessage({ type: 'config', ratio: ratio })
+            return false
         }
-      }
-
-      // Periodically, handle the `blockIn` and `blockOut` queues :
-      // Send `blocksIn` to the worker for future processing and ask for batches that are ready to put in `blocksOut`.
-      setInterval(function() {
-        if (blocksIn.length)
-          paulstretchWorker.postMessage({ type: 'write', data: blocksIn.shift() })
-
-        if (blocksOut.length < batchSize) 
-          paulstretchWorker.postMessage({ type: 'read' })
-      }, 100)
-
-    }, true)
-    audioSource.src = 'sounds/miles.wav'
-
-  </script>
+        
+        audioSource.addEventListener('canplay', function() {
+            console.log('audio loaded')
+            sourceNode = context.createMediaElementSource(audioSource)
+            audioSource.play()
+            sourceNode.connect(paulstretchNode)
+            paulstretchNode.connect(context.destination)
+            
+            paulstretchWorker.onmessage = function (event) {
+                // Add all the blocks from the batch to the `blocksOut` queue.
+                if (event.data.type === 'read') {
+                    var blocks = event.data.data
+                    while (blocks.length) blocksOut.push(blocks.shift())
+                }
+            }
+            
+            paulstretchNode.onaudioprocess = function(event) {
+                var ch, block = []
+                
+                // Add every incoming block to the `blocksIn` queue
+                for (ch = 0; ch < numberOfChannels; ch++)
+                block.push(event.inputBuffer.getChannelData(ch))
+                blocksIn.push(block)
+                
+                // If there is any processed block, play it back ...
+                if (self.blocksOut.length) {
+                    block = self.blocksOut.shift()
+                    for (ch = 0; ch < numberOfChannels; ch++)
+                    event.outputBuffer.getChannelData(ch).set(block[ch])
+                }
+            }
+            
+            // Periodically, handle the `blockIn` and `blockOut` queues :
+            // Send `blocksIn` to the worker for future processing and ask for batches that are ready to put in `blocksOut`.
+            setInterval(function() {
+                if (blocksIn.length)
+                paulstretchWorker.postMessage({ type: 'write', data: blocksIn.shift() })
+                
+                if (blocksOut.length < batchSize) 
+                paulstretchWorker.postMessage({ type: 'read' })
+            }, 100)
+            
+        }, true)
+        audioSource.src = 'sounds/miles.wav'
+        
+    </script>
 </body>
 
 </html>

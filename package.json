@@ -1,6 +1,6 @@
 {
   "name": "paulstretch",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Sebastien Piquemal <sebpiq@gmail.com>",
   "repository": {
     "type": "git",
@@ -10,13 +10,12 @@
     "ndfft": "0.0.x"
   },
   "devDependencies": {
+    "browserify": "^16.3.0",
     "mocha": "1.12.x",
-    "async": "0.2.x",
-    "underscore": "1.5.x",
     "pcm-boilerplate": "*",
-    "web-audio-api": "*"
+    "underscore": "1.5.x"
   },
   "engines": {
-    "node": ">=0.10"
+    "node": ">=10"
   }
 }
