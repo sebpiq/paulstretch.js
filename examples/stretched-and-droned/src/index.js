@@ -17,20 +17,11 @@ $(function() {
     $('#showAbout').click(showModal.bind(this, '#aboutModal'))
     
     // Feature and browser detection
-    var ffResult, ffVersion
     if (!window.AudioContext) {
         showModal('#noWebAudioAPIError')
         $('#createTrack').hide()
         $('#recContainer').hide()
         return
-    } else if (ffResult = /firefox\/([0-9]+)/.exec(navigator.userAgent.toLowerCase())) {
-        ffVersion = parseInt(ffResult[1])
-        if (ffVersion < 37) {
-            showModal('#firefoxError')
-            $('#createTrack').hide()
-            $('#recContainer').hide()
-            return
-        }
     }
     
     // Initializing the app
@@ -105,7 +96,7 @@ $(function() {
     
     new soundSources.SoundCloudSourceView($('#soundCloudSource'))
     SC.initialize({ client_id: globals.scToken })
-    //new soundSources.FreeSoundSourceView($('#freesoundSource'))
+    // new soundSources.FreeSoundSourceView($('#freesoundSource'))
     
     $('#toggleRec').click(function() {
         var button = $(this)

@@ -69,7 +69,10 @@ class FreeSoundSourceView extends SoundSourceView {
     
     resultClicked(result) {
         $.getJSON(result.url, (r) => {
-            emitter.emit('selected', r.download + '?token=' + globals.fsToken, result.display)
+            emitter.emit('selected', {
+                display: result.display,
+                url: r.previews['preview-lq-mp3'] + '?token=' + globals.fsToken
+            })
         })
     }
     
