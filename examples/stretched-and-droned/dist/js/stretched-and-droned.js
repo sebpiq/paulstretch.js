@@ -15,8 +15,8 @@ class Track extends EventEmitter {
         this.audioSource = audioSource
         console.log('Track created, ' + this)
         
-        this.blocksIn = []
-        this.blocksOut = []
+        // this.blocksIn = []
+        // this.blocksOut = []
         
         this.stretch = 5
         this.volume = 1
@@ -25,7 +25,7 @@ class Track extends EventEmitter {
         this.filterQ = 0
         this.filterFreq = 400
         
-        this.paulstretchWorker = null
+        // this.paulstretchWorker = null
         this.paulstretchNode = null
         this.sourceNode = null
         this.ampGainNode = context.createGain()
@@ -74,14 +74,16 @@ class Track extends EventEmitter {
     
     setAmpModShape(array) {
         var buffer = context.createBuffer(1, 44100, context.sampleRate)
-        , upsampled = utils.upsample(array, 44100)
+        var upsampled = utils.upsample(array, 44100)
         
         buffer.getChannelData(0).set(upsampled)
         this.ampModShape = array
         if (this.ampModulatorNode) {
             this.ampModulatorNode.stop(0)
             this.ampModulatorNode.disconnect()
-        } else this.ampGainNode.gain.value = 0 // First time we need to remove the static gain
+        } else {
+            this.ampGainNode.gain.value = 0 // First time we need to remove the static gain
+        }
         this.ampModulatorNode = context.createBufferSource()
         this.ampModulatorNode.loop = true
         this.ampModulatorNode.connect(this.ampGainNode.gain)
@@ -102,61 +104,73 @@ class Track extends EventEmitter {
     _onAudioSourceCanPlay() {
         console.log('Can play track, ' + this)    
         var numberOfChannels = 2
-        this.paulstretchWorker = new Worker('./js/paulstretch-worker.js')
-        this.paulstretchNode = context.createScriptProcessor(bufferSize, numberOfChannels, numberOfChannels)
+        // this.paulstretchWorker = new Worker('./js/paulstretch-worker.js')
+        // this.paulstretchNode = context.createScriptProcessor(bufferSize, numberOfChannels, numberOfChannels)
+
+        // this.paulstretchWorker.postMessage({
+        //     type: 'init',
+        //     winSize: winSize,
+        //     ratio: this.stretch,
+        //     numberOfChannels: numberOfChannels,
+        //     blockSize: bufferSize,
+        //     batchSize: batchSize,
+        // })
         
-        this.paulstretchWorker.postMessage({
-            type: 'init',
-            winSize: winSize,
-            ratio: this.stretch,
-            numberOfChannels: numberOfChannels,
-            blockSize: bufferSize,
-            batchSize: batchSize,
+        context.audioWorklet.addModule('js/paulstretch-worklet.js').then(() => {
+            this.paulstretchNode = new AudioWorkletNode(context, 'PaulStretchNode', {
+                // you have to specify the channel count for each input, so by default only 1 is needed
+                outputChannelCount: [ numberOfChannels ]
+            });
+
+            this.sourceNode = context.createMediaElementSource(this.audioSource)
+            this.audioSource.play()
+
+            this.sourceNode.connect(this.paulstretchNode)
+            this.paulstretchNode.connect(this.ampGainNode)
+            this.ampGainNode.connect(this.filterNode)
+            this.filterNode.connect(this.mixerNode)
+            this.mixerNode.connect(recorderBus)
+            
+            this.emit('load:ready')
+        }).catch((err) => {
+            debugger
+            console.error(err)
         })
+
         
-        this.sourceNode = context.createMediaElementSource(this.audioSource)
-        this.audioSource.play()
+        // this.paulstretchWorker.onmessage = (event) => {
+        //     // Add all the blocks from the batch to the `blocksOut` queue.
+        //     if (event.data.type === 'read') {
+        //         var blocks = event.data.data
+        //         while (blocks.length) this.blocksOut.push(blocks.shift())
+        //     }
+        // }
         
-        this.paulstretchWorker.onmessage = (event) => {
-            // Add all the blocks from the batch to the `blocksOut` queue.
-            if (event.data.type === 'read') {
-                var blocks = event.data.data
-                while (blocks.length) this.blocksOut.push(blocks.shift())
-            }
-        }
-        
-        this.paulstretchNode.onaudioprocess = (event) => {
-            var ch, block = []
-            // Add every incoming block to the `blocksIn` queue
-            for (ch = 0; ch < numberOfChannels; ch++)
-            block.push(event.inputBuffer.getChannelData(ch))
-            this.blocksIn.push(block)
+        // this.paulstretchNode.onaudioprocess = (event) => {
+        //     var ch, block = []
+        //     // Add every incoming block to the `blocksIn` queue
+        //     for (ch = 0; ch < numberOfChannels; ch++)
+        //         block.push(event.inputBuffer.getChannelData(ch))
+        //     this.blocksIn.push(block)
             
-            // If there is any processed block, read it ...
-            if (this.blocksOut.length) {
-                block = this.blocksOut.shift()
-                for (ch = 0; ch < numberOfChannels; ch++)
-                event.outputBuffer.getChannelData(ch).set(block[ch])
-            }
-        }
+        //     // If there is any processed block, read it ...
+        //     if (this.blocksOut.length) {
+        //         block = this.blocksOut.shift()
+        //         for (ch = 0; ch < numberOfChannels; ch++)
+        //         event.outputBuffer.getChannelData(ch).set(block[ch])
+        //     }
+        // }
         
-        // Periodically, handle the `blockIn` and `blockOut` queues :
-        // Send `blocksIn` to the worker for future processing and ask for batches that are ready to put in `blocksOut`.
-        setInterval(() => {
-            if (this.blocksIn.length)
-            this.paulstretchWorker.postMessage({ type: 'write', data: this.blocksIn.shift() })
+        // // Periodically, handle the `blockIn` and `blockOut` queues :
+        // // Send `blocksIn` to the worker for future processing and ask for batches that are ready to put in `blocksOut`.
+        // setInterval(() => {
+        //     if (this.blocksIn.length)
+        //     this.paulstretchWorker.postMessage({ type: 'write', data: this.blocksIn.shift() })
             
-            if (this.blocksOut.length < batchSize) 
-            this.paulstretchWorker.postMessage({ type: 'read' })
-        }, 100)
+        //     if (this.blocksOut.length < batchSize) 
+        //     this.paulstretchWorker.postMessage({ type: 'read' })
+        // }, 100)
         
-        this.sourceNode.connect(this.paulstretchNode)
-        this.paulstretchNode.connect(this.ampGainNode)
-        this.ampGainNode.connect(this.filterNode)
-        this.filterNode.connect(this.mixerNode)
-        this.mixerNode.connect(recorderBus)
-        
-        this.emit('load:ready')
     }
 
 }
