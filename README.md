@@ -9,7 +9,7 @@ Just download the latest build in [dist/](https://github.com/sebpiq/paulstretch.
 Examples
 ==========
 - Example, stretching a sample from a web worker : http://sebpiq.github.io/paulstretch.js/examples/simple/index.html
-- More fun example, creating drones with tracks from SoundCloud : http://sebpiq.github.io/paulstretch.js/examples/stretched-and-droned/dist/index.html
+- More fun example, creating drones with tracks from SoundCloud : http://sebpiq.github.io/paulstretch.js/examples/expendable-music/dist/index.html
 
 Run tests
 ==============
@@ -17,7 +17,7 @@ Run tests
 Tests are written with mocha.
 
 ```
-npx mocha test/ examples/stretched-and-droned/test/ -t 15000
+npx mocha test/ examples/expendable-music/test/ -t 15000
 ```
 
 Build
@@ -35,6 +35,6 @@ Build examples
 ---------------
 
 ```
-npx browserify examples/stretched-and-droned/src/index.js > examples/stretched-and-droned/dist/js/stretched-and-droned.js 
-npx browserify index.js > examples/stretched-and-droned/dist/js/paulstretch.js 
+npx browserify examples/expendable-music/src/index.js > examples/expendable-music/dist/js/expendable-music.js 
+npx browserify index.js > examples/expendable-music/dist/js/paulstretch.js 
 ```

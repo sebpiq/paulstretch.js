@@ -54,13 +54,6 @@ class Track extends EventEmitter {
         this.mixerNode.gain.exponentialRampToValueAtTime(volume, context.currentTime + 0.05)
     }
     
-    setAmpModFreq(freq) {
-        this.ampModFreq = freq
-        if (this.ampModulatorNode) {
-            this.ampModulatorNode.playbackRate.exponentialRampToValueAtTime(freq, context.currentTime + 0.05)
-        }
-    }
-    
     setFilterQ(q) {
         this.filterQ = q
         this.filterNode.Q.linearRampToValueAtTime(q, context.currentTime + 0.05)
@@ -71,9 +64,16 @@ class Track extends EventEmitter {
         this.filterNode.frequency.exponentialRampToValueAtTime(freq, context.currentTime + 0.05)
     }
     
+    setAmpModFreq(freq) {
+        this.ampModFreq = freq
+        if (this.ampModulatorNode) {
+            this.ampModulatorNode.playbackRate.exponentialRampToValueAtTime(freq, context.currentTime + 0.05)
+        }
+    }
+
     setAmpModShape(array) {
         var buffer = context.createBuffer(1, 44100, context.sampleRate)
-        , upsampled = utils.upsample(array, 44100)
+        var upsampled = utils.upsample(array, 44100)
         
         buffer.getChannelData(0).set(upsampled)
         this.ampModShape = array
