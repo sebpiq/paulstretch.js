@@ -31,6 +31,7 @@
 </head>
 
 <body>
+    <button id="startButton">START</button>
     <form id="config">
         <input name="ratio" type="text" />
         <input type="submit" value="change stretch ratio" />
@@ -39,6 +40,7 @@
         <a href="https://github.com/sebpiq/paulstretch.js">paulstretch.js</a> simple example. By <a href="http://funktion.fm">Sébastien Piquemal</a>
     </p>
     <script>
+        var startButton = document.querySelector('#startButton')
         var context = new AudioContext
         var numberOfChannels = 1
         var bufferSize = 4096
@@ -109,6 +111,10 @@
         }, true)
         audioSource.src = 'sounds/miles.wav'
         
+        startButton.onclick = function() {
+            context.resume()
+            startButton.style.display = 'none'
+        }
     </script>
 </body>
 
